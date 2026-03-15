@@ -1,0 +1,32 @@
+[package]
+name = "pg_guard"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+clap = { version = "4.0", features = ["derive"] }
+bollard = "0.16"
+chrono = "0.4"
+flate2 = "1"
+axum = "0.8"
+axum-extra = { version = "0.10", features = ["cookie"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+argon2 = { version = "0.5", features = ["std"] }
+
+[[bin]]
+name = "pg_guard"
+path = "src/main.rs"
+
+[[bin]]
+name = "pg_browse"
+path = "src/browse.rs"
+
+[[bin]]
+name = "pg_recall"
+path = "src/recall.rs"
+
+[[bin]]
+name = "pg_web"
+path = "src/web.rs"
