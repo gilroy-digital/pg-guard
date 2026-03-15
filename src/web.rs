@@ -1806,10 +1806,10 @@ async fn help_page(State(state): State<AppState>, jar: CookieJar) -> impl IntoRe
             <table>
                 <thead><tr><th>Command</th><th>Description</th></tr></thead>
                 <tbody>
-                    <tr><td><code>docker exec pg_guard pg_guard /backups</code></td><td>Back up all Postgres containers</td></tr>
-                    <tr><td><code>docker exec pg_guard pg_guard /backups --container my_db</code></td><td>Back up a single container</td></tr>
-                    <tr><td><code>docker exec -it pg_guard pg_browse /backups</code></td><td>Browse backups interactively in the terminal</td></tr>
-                    <tr><td><code>docker exec -it pg_guard pg_recall /backups</code></td><td>Restore a backup interactively in the terminal</td></tr>
+                    <tr><td><code>docker exec pg-guard pg_guard /backups</code></td><td>Back up all Postgres containers</td></tr>
+                    <tr><td><code>docker exec pg-guard pg_guard /backups --container my_db</code></td><td>Back up a single container</td></tr>
+                    <tr><td><code>docker exec -it pg-guard pg_browse /backups</code></td><td>Browse backups interactively in the terminal</td></tr>
+                    <tr><td><code>docker exec -it pg-guard pg_recall /backups</code></td><td>Restore a backup interactively in the terminal</td></tr>
                 </tbody>
             </table>
         </div>
@@ -2163,10 +2163,10 @@ fn print_banner() {
     println!("  ║  Web UI:  http://localhost:3690                                   ║");
     println!("  ║                                                                  ║");
     println!("  ║  CLI:                                                            ║");
-    println!("  ║    docker exec pg_guard pg_guard /backups           Backup all   ║");
-    println!("  ║    docker exec pg_guard pg_guard /backups --container <name>     ║");
-    println!("  ║    docker exec -it pg_guard pg_browse /backups      Browse       ║");
-    println!("  ║    docker exec -it pg_guard pg_recall /backups      Restore      ║");
+    println!("  ║    docker exec pg-guard pg_guard /backups           Backup all   ║");
+    println!("  ║    docker exec pg-guard pg_guard /backups --container <name>     ║");
+    println!("  ║    docker exec -it pg-guard pg_browse /backups      Browse       ║");
+    println!("  ║    docker exec -it pg-guard pg_recall /backups      Restore      ║");
     println!("  ║                                                                  ║");
     println!("  ╚══════════════════════════════════════════════════════════════════╝");
     println!();

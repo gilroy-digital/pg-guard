@@ -21,12 +21,17 @@ else
 fi
 git push origin "$(git branch --show-current)" 2>/dev/null || echo "No git remote configured, skipping push."
 
-# Container registry
+# Container registry (multi-arch)
 echo ""
 echo "=== Container Registry ==="
 echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
-docker build -t "$IMAGE" .
-docker push "$IMAGE"
+
+# Create builder if it doesn't exist
+docker buildx inspect pg_guard_builder >/dev/null 2>&1 || \
+    docker buildx create --name pg_guard_builder --use
+
+docker buildx use pg_guard_builder
+docker buildx build --platform linux/amd64,linux/arm64 -t "$IMAGE" --push .
 
 echo ""
-echo "Done — committed to git and pushed $IMAGE"
+echo "Done — committed to git and pushed $IMAGE (amd64 + arm64)"

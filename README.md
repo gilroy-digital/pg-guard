@@ -6,9 +6,9 @@ A lightweight Postgres backup manager and database inspector. Runs as a single D
 
 ```bash
 docker run -d \
-  --name pg_guard \
+  --name pg-guard \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -v pg_guard_data:/backups \
+  -v pg-guard-data:/backups \
   -p 3690:3690 \
   --restart unless-stopped \
   ghcr.io/gilroy-digital/pg-guard:latest
@@ -27,13 +27,13 @@ services:
     container_name: pg_guard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - pg_guard_data:/backups
+      - pg-guard-data:/backups
     ports:
       - "3690:3690"
     restart: unless-stopped
 
 volumes:
-  pg_guard_data:
+  pg-guard-data:
 ```
 
 ```bash
@@ -66,10 +66,10 @@ All CLI tools are available inside the container via `docker exec`:
 
 | Command | Description |
 |---|---|
-| `docker exec pg_guard pg_guard /backups` | Back up all Postgres containers |
-| `docker exec pg_guard pg_guard /backups --container <name>` | Back up a single container |
-| `docker exec -it pg_guard pg_browse /backups` | Browse backup contents interactively |
-| `docker exec -it pg_guard pg_recall /backups` | Restore a backup interactively |
+| `docker exec pg-guard pg_guard /backups` | Back up all Postgres containers |
+| `docker exec pg-guard pg_guard /backups --container <name>` | Back up a single container |
+| `docker exec -it pg-guard pg_browse /backups` | Browse backup contents interactively |
+| `docker exec -it pg-guard pg_recall /backups` | Restore a backup interactively |
 
 ## How It Works
 

@@ -1,13 +1,13 @@
 services:
   pg_guard:
     image: ghcr.io/gilroy-digital/pg-guard:latest
-    container_name: pg_guard
+    container_name: pg-guard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - pg_guard_data:/backups
+      - pg-guard-data:/backups
     ports:
       - "3690:3690"
     restart: unless-stopped
 
 volumes:
-  pg_guard_data:
+  pg-guard-data:
