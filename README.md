@@ -4,12 +4,26 @@ A lightweight Postgres backup manager and database inspector. Runs as a single D
 
 ## Quick Start
 
-Create a `docker-compose.yml`:
+```bash
+docker run -d \
+  --name pg_guard \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v pg_guard_data:/backups \
+  -p 3690:3690 \
+  --restart unless-stopped \
+  ghcr.io/gilroy-digital/pg-guard:latest
+```
+
+That's it. Open `http://localhost:3690` — on first visit you'll create an admin account.
+
+### Using Docker Compose
+
+If you prefer, create a `docker-compose.yml`:
 
 ```yaml
 services:
   pg_guard:
-    image: ghcr.io/gilroy-digital/pg_guard:latest
+    image: ghcr.io/gilroy-digital/pg-guard:latest
     container_name: pg_guard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -25,20 +39,6 @@ volumes:
 ```bash
 docker compose up -d
 ```
-
-Or run directly without a compose file:
-
-```bash
-docker run -d \
-  --name pg_guard \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v pg_guard_data:/backups \
-  -p 3690:3690 \
-  --restart unless-stopped \
-  ghcr.io/gilroy-digital/pg_guard:latest
-```
-
-Open `http://localhost:3690` — on first visit you'll create an admin account.
 
 ## Web Dashboard
 

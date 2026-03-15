@@ -1,6 +1,6 @@
 services:
   pg_guard:
-    build: .
+    image: ghcr.io/gilroy-digital/pg-guard:latest
     container_name: pg_guard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
