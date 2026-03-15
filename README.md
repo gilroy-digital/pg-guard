@@ -1,67 +1,99 @@
-# pg_guard
+# PG-Guard
 
-A Docker container that automatically backs up all running Postgres instances to a specified target directory at midnight daily.
+A lightweight Postgres backup manager and database inspector. Runs as a single Docker container, auto-discovers your Postgres instances, and provides both a web dashboard and CLI tools.
 
-## Usage
+## Quick Start
 
-Create a `docker-compose.yml` file:
+Create a `docker-compose.yml`:
 
 ```yaml
-
-
 services:
   pg_guard:
-    build: .
+    image: ghcr.io/gilroy-digital/pg_guard:latest
     container_name: pg_guard
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./backups:/backups
-    environment:
-      - PG_KEEP_RUNS=14
+      - pg_guard_data:/backups
+    ports:
+      - "3690:3690"
     restart: unless-stopped
-```
 
-Then run:
+volumes:
+  pg_guard_data:
+```
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-Or set environment variables:
+Or run directly without a compose file:
 
 ```bash
-export PG_KEEP_RUNS=14
-docker-compose up -d
+docker run -d \
+  --name pg_guard \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v pg_guard_data:/backups \
+  -p 3690:3690 \
+  --restart unless-stopped \
+  ghcr.io/gilroy-digital/pg_guard:latest
 ```
 
-The container will run continuously and execute backups at midnight (00:00) every day.
+Open `http://localhost:3690` — on first visit you'll create an admin account.
 
-## Configuration
+## Web Dashboard
 
-Set the following environment variables in your `docker-compose.yml` or export them:
+The dashboard at port `3690` provides:
 
-- `PG_KEEP_RUNS`: Number of backup runs to keep per Postgres container (default: 14)
+- **Backup management** — view, create, and restore backups for all detected Postgres containers
+- **Backup All Now** — one-click backup of every Postgres container
+- **Per-container backup** — backup individual containers on demand
+- **Browse backups** — view tables and paginated row data from any backup file
+- **Restore** — drop and recreate databases from a selected backup (with confirmation)
+- **Live database inspector** — browse running databases, tables, columns, and row data in real time
+- **Table search** — filter tables by name or column name
+- **Column inspector** — inspect table schemas (column names, types, nullable) from the table list
+- **Row detail panel** — click any row to view all fields as key-value pairs
+- **Full-text search** — search across all columns in a live table (server-side SQL query with pagination)
+- **Page filter** — instant client-side filtering of the current page of results
+- **Configurable schedule** — set backup frequency (hourly to weekly), start time, and retention from the UI
+- **Toggle backups** — enable/disable automatic backups without removing the container
+- **Dark/light mode** — retro-tech theme with a toggle, defaults to dark
+- **Authentication** — Argon2id password hashing, session cookies, login required
 
-Credentials are automatically read from each container's `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables.
+## CLI Tools
 
-## What it does
+All CLI tools are available inside the container via `docker exec`:
 
-- Discovers all running Docker containers with images containing "postgres"
-- Automatically reads `POSTGRES_USER` and `POSTGRES_PASSWORD` from each container's environment
-- Runs `pg_dumpall` inside each container and compresses with gzip
-- Saves the backup as `YYYY-MM-DD.sql.gz` in the `/backups/<container_name>/` directory
-- Keeps only the specified number of recent backups, deleting older ones
+| Command | Description |
+|---|---|
+| `docker exec pg_guard pg_guard /backups` | Back up all Postgres containers |
+| `docker exec pg_guard pg_guard /backups --container <name>` | Back up a single container |
+| `docker exec -it pg_guard pg_browse /backups` | Browse backup contents interactively |
+| `docker exec -it pg_guard pg_recall /backups` | Restore a backup interactively |
+
+## How It Works
+
+- Auto-discovers running Postgres containers via the Docker socket
+- Reads `POSTGRES_USER` and `POSTGRES_PASSWORD` from each container's environment
+- Backups use `pg_dumpall --clean` and are stored as timestamped gzipped SQL files
+- Restores terminate connections, drop all application databases, then replay the full dump
+- Configuration and credentials are stored in the named Docker volume
+- Login passwords are hashed with Argon2id — only the hash is stored
 
 ## Requirements
 
-- Docker socket mounted for container discovery
-- Postgres instances must allow connections from the backup container (same Docker network)
-- `PGPASSWORD` environment variable set if authentication is required
-- Target directory mounted as a volume
+- Docker socket mounted (`/var/run/docker.sock`)
+- Postgres containers must have `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables set
+- The specified user needs superuser privileges for `pg_dumpall`
 
-## Assumptions
+## Support PG-Guard
 
-- Postgres containers have `POSTGRES_USER` and `POSTGRES_PASSWORD` environment variables set
-- The specified user has superuser privileges for `pg_dumpall`
-- Containers have `gzip` available for compression
-- Docker socket is accessible for container inspection and execution
+PG-Guard is free, open source software built and maintained by an independent developer. If it saves you time or keeps your data safe, consider supporting its development:
+
+[**Donate**](https://donate.stripe.com/fZu6oHbg026l7EIax2fbq04)
+
+[More tools from Gilroy.Digital](https://gilroy.digital/tools)
+
+---
+
+Built by **Fleebee**
